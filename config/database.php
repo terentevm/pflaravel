@@ -2,18 +2,22 @@
 
 use Illuminate\Support\Str;
 
-    $env_url = getenv("DATABASE_URL");
+if (env('APP_ENV') === 'local') {
+    $url = env('DATABASE_URL');
+    $host = env('DB_HOST');
+    $username = env('DB_USERNAME');
+    $password = env('DB_PASSWORD');
+    $database = env('DB_DATABASE');
 
-    if (isset($env)) {
-        $url = parse_url(getenv("DATABASE_URL"));
+} else {
+    $url = parse_url(getenv("DATABASE_URL"));
 
 
-        $host = $url["host"];
-        $username = $url["user"];
-        $password = $url["pass"];
-        $database = substr($url["path"], 1);
-    }
-
+    $host = $url["host"];
+    $username = $url["user"];
+    $password = $url["pass"];
+    $database = substr($url["path"], 1);
+}
 
 
 return [
@@ -82,7 +86,7 @@ return [
             'url' => env('DATABASE_URL', $url),
             'host' => env('DB_HOST', $host),
             'port' => env('DB_PORT', '5432'),
-            'database' => env('DB_DATABASE', $database ),
+            'database' => env('DB_DATABASE', $database),
             'username' => env('DB_USERNAME', $username),
             'password' => env('DB_PASSWORD', $password),
             'charset' => 'utf8',
@@ -137,7 +141,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'predis'),
-            'prefix' => Str::slug(env('APP_NAME', 'laravel'), '_').'_database_',
+            'prefix' => Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_',
         ],
 
         'default' => [
