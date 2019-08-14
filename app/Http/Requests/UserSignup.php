@@ -26,7 +26,7 @@ class UserSignup extends FormRequest
     {
         return [
             'name' => 'required',
-            'login' => 'required|email',
+            'login' => 'required|email|unique:users,login',
             'password' => 'required',
             'currency' => [
                 'sometimes',

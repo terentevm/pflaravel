@@ -28,7 +28,9 @@ class ModelByUser extends Model
 
         self::creating(function ($model) {
 
-            if ($model->primaryKey === ' id' && $model->keyType === 'uuid' && !isset($model->id) ) {
+            if ($model->primaryKey === 'id' && $model->keyType === 'uuid'
+                && (!isset($model->id) || is_null($model->id) || $model->id === '')  ) {
+
                 $model->id = UUID::gen();
             }
 

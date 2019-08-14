@@ -20,7 +20,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('details', 'UserController@details');
     Route::apiResources([
         'currencies' => 'CurrencyController',
-        'wallets' => 'WalletsController'
+        'wallets' => 'WalletsController',
+        'itemsexpense' => 'ItemsExpenditureController',
+        'itemsincome' => 'ItemsIncomeController'
     ]);
 
     Route::post('tools/loadrates', 'ToolsController@loadRates');
