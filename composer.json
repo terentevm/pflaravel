@@ -61,7 +61,9 @@
             "@php artisan key:generate --ansi"
         ],
         "post-install-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postInstall"
+            "php artisan clear-compiled",
+            "chmod -R 777 storage",
+            "php artisan passport:keys"
         ]
     }
 }
