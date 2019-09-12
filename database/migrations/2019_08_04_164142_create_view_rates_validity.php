@@ -34,6 +34,6 @@ class CreateViewRatesValidity extends Migration
      */
     public function down()
     {
-        DB::statement("DROP VIEW rates_validity IF EXISTS");
+        DB::statement("DROP VIEW IF EXISTS rates_validity");
     }
 }
