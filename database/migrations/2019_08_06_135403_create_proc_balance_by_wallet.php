@@ -26,7 +26,7 @@ BEGIN
 	
 	RETURN QUERY select 
 		temp.wallet_id,
-		wallets.name as wallet,
+		ref_wallets.name as wallet,
 		temp.balance
 	FROM (select
 		trans.wallet_id,

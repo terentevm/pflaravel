@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\traits\Hierarchical;
+
 class ItemExpenditure extends ModelByUser
 {
     public $timestamps = false;
@@ -25,6 +27,8 @@ class ItemExpenditure extends ModelByUser
         'comment' => ''
     ];
 
+    use Hierarchical;
+
     public function parent()
     {
         return $this->belongsTo('App\ItemExpenditure', 'parent_id', 'id');
@@ -35,21 +39,4 @@ class ItemExpenditure extends ModelByUser
         return $this->hasMany('App\ItemExpenditure', 'parent_id', 'id');
     }
 
-    public static function findByParent($parent_id = null, $with_nested = true)
-    {
-        $items = static::where('parent_id', $parent_id)->get();
-
-        foreach ($items as $item) {
-            if ($with_nested === true) {
-                $nested_items = self::findByParent($item->id, $with_nested);
-            } else {
-                $nested_items = [];
-            }
-
-            $item->items = $nested_items;
-            $item->hasChild = count($nested_items) > 0;
-        }
-
-        return $items;
-    }
 }

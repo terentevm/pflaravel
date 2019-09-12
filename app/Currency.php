@@ -9,9 +9,13 @@ use Illuminate\Support\Facades\Auth;
 class Currency extends ModelByUser
 {
     public $timestamps = false;
+
     protected $table = 'ref_currencies';
+
     protected $primaryKey = 'id';
+
     protected $keyType = 'uuid';
+
     protected $fillable = [
         'id',
         'name',

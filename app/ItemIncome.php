@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\traits\Hierarchical;
+
 class ItemIncome extends ModelByUser
 {
     public $timestamps = false;
@@ -20,6 +22,8 @@ class ItemIncome extends ModelByUser
         'active',
         'comment'
     ];
+
+    use Hierarchical;
 
     public function parent()
     {

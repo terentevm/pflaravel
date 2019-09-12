@@ -21,7 +21,16 @@ class CurrencyTest extends TestCase
         ]);
     }
 
-    public function testCreateSuccessfull()
+    public function testGetAllWithRatesSuccessful()
+    {
+        $response = $this->json('GET', '/api/currencies?withRates=true', [], $this->getHeaders());
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            '*' => ['id', 'name', 'code', 'short_name', 'mult', 'rate'],
+        ]);
+    }
+
+    public function testCreateSuccessfully()
     {
         $data = [
             'code' => 203,

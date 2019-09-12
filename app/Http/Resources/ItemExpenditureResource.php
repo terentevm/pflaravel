@@ -22,7 +22,8 @@ class ItemExpenditureResource extends JsonResource
             'active' => boolval($this->active),
             'comment' => $this->comment ?? '',
             'hasChilds' => empty($this->items),
-            'items' => empty($this->items) ? [] : ItemExpenditureResource::collection($this->items)
+			'collapsed' => true,
+            'children' => empty($this->items) ? [] : ItemExpenditureResource::collection($this->items)
         ];
     }
 }

@@ -19,6 +19,7 @@ class UserController extends Controller
     public function signup(UserSignup $request)
     {
         $input = $request->all();
+        $input['login'] = strtolower($input['login']);
         $input['password'] = bcrypt($input['password']);
         $input['id'] = UUID::gen();
 
@@ -49,7 +50,7 @@ class UserController extends Controller
 
     public function login()
     {
-        if (Auth::attempt(['login' => request('login'), 'password' => request('password')])) {
+        if (Auth::attempt(['login' => strtolower(request('login')), 'password' => request('password')])) {
             $user = Auth::user();
             $success['token'] = $user->createToken('MyApp')->accessToken;
 

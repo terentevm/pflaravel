@@ -13,13 +13,13 @@ class CreateProcAddToRegExpenses extends Migration
      */
     public function up()
     {
-        DB::statement('CREATE OR REPLACE FUNCTION public.add_to_reg_expenses(expend_id uuid)
+        DB::statement("CREATE OR REPLACE FUNCTION public.add_to_reg_expenses(expend_id uuid)
     RETURNS integer
-    LANGUAGE "plpgsql"
+    LANGUAGE 'plpgsql'
     VOLATILE
     PARALLEL UNSAFE
     COST 100
-AS $BODY$DECLARE
+AS \$BODY\$DECLARE
   rows_affected INT;
 
 BEGIN
@@ -27,7 +27,7 @@ BEGIN
   	INSERT INTO public.reg_expenses (date, month, expend_id, wallet_id, currency_id, item_id, user_id, sum) 
 SELECT 
     doc.date as date,
-    date_trunc("month", doc.date) AS month,
+    date_trunc('month', doc.date) AS month,
 	doc.id as expend_id,
     doc.wallet_id as wallet_id,
     ref_wallets.currency_id as currency_id,
@@ -50,7 +50,7 @@ GROUP BY
 	
   RETURN rows_affected;
 END;
-$BODY$;');
+\$BODY\$;");
     }
 
     /**

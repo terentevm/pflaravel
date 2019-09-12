@@ -14,7 +14,7 @@ class CreateProcReportIncomes extends Migration
     public function up()
     {
         DB::statement('CREATE OR REPLACE FUNCTION public.report_incomes(IN user_id uuid,IN date_begin date,IN date_end date,IN currency_id_to uuid,IN period_mode integer DEFAULT 0)
-    RETURNS TABLE(period date, item_id uuid, item_name character, has_convert_error boolean, sum_converted numeric)
+    RETURNS TABLE(period date, item_id uuid, item_name varchar(150), has_convert_error boolean, sum_converted numeric)
     LANGUAGE \'plpgsql\'
     VOLATILE
     PARALLEL UNSAFE

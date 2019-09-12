@@ -11,15 +11,25 @@ class ItemsExpenditureController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * @param \Illuminate\Http\Request $request
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index(Request $request)
     {
-        $with_nested = $request->input('withnested') === "true" ? true : false;
-        $parent_id = $request->input('parent') ?? null;
+        $asList = $request->input('list') === "true" ? true : false;
 
-        $items = ItemExpenditure::findByParent($parent_id, $with_nested);
+        if ($asList === true) {
+            $items = ItemExpenditure::query()->filter($request)->orderBy('name', 'asc')->get();
+
+        } else {
+
+            $with_nested = $request->input('withnested') === "true" ? true : false;
+
+            $parent_id = $request->input('parent') ?? null;
+
+            $items = ItemExpenditure::findByParent($parent_id, $with_nested);
+        }
 
         return ItemExpenditureResource::collection($items);
 
@@ -29,7 +39,7 @@ class ItemsExpenditureController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Http\Requests\ItemsExpenditureRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(ItemsExpenditureRequest $request)
@@ -45,7 +55,7 @@ class ItemsExpenditureController extends Controller
      * Display the specified resource.
      *
      * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\ItemExpenditureResource
      */
     public function show($id)
     {
@@ -59,7 +69,7 @@ class ItemsExpenditureController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Http\Requests\ItemsExpenditureRequest $request
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
@@ -67,13 +77,21 @@ class ItemsExpenditureController extends Controller
     {
         $item = ItemExpenditure::findOrFail($id);
 
-        $item->update($request->all());
+        $formData = $request->all();
+
+        if (!isset($formData['parent_id'])) {
+            $formData['parent_id'] = null;
+        }
+
+        $item->update($formData);
+
+        return response('',200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param  string $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)

@@ -18,7 +18,7 @@ class CreateTableDocExpensesHeader extends Migration
             $table->uuid('user_id')->index();
             $table->uuid('wallet_id');
             $table->date('date');
-            $table->string('comment', 150);
+            $table->string('comment', 150)->nullable()->default('');
             $table->decimal('sum', 15, 2);
             $table->timestamps();
 

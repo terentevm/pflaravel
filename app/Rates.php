@@ -76,7 +76,13 @@ class Rates extends ModelByUser
         return $result;
     }
 
-    public static function getLastRates($user, array $currencies = [], Carbon $date)
+    /**
+     * @param User $user
+     * @param array $currencies contain id's [id1, id2....idn]
+     * @param Carbon $date
+     * @return array
+     */
+    public static function getLastRates(User $user, array $currencies = [], Carbon $date)
     {
         $strDate = $date->toDateString();
 

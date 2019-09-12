@@ -21,7 +21,7 @@ class CurrencyController extends Controller
     {
         $currencies = Currency::all();
 
-        if (boolval($request->input('withRates')) === true) {
+        if ($request->input('withRates') === 'true') {
 
             $passedDate = $request->input('date');
 

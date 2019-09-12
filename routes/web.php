@@ -18,3 +18,6 @@ Route::get('/', function () {
 Route::get('/conf', function () {
     dd(config('money.baseCurrencyList'));
 });
+
+Route::get('/expenses', 'ExpensesController@index');
+Route::get('/testbalance', 'ReportsController@balance');

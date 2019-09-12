@@ -17,7 +17,7 @@ class CreateTableContacts extends Migration
             $table->uuid('id')->unique()->index();
             $table->uuid('user_id')->index();
             $table->string('name', 150);
-            $table->string('comment', 150)->default('');
+            $table->string('comment', 150)->default('')->nullable();
 
             $table->foreign('user_id')
                 ->references('id')->on('users')

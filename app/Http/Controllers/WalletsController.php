@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Requests\WalletRequest;
 use App\Http\Resources\WalletResource;
 use App\Http\Resources\WalletResourceCollection;
+use App\Repositories\BalanceRepository;
 use App\Wallet;
 
 class WalletsController extends Controller
@@ -43,12 +45,22 @@ class WalletsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param Request $request
+     * @param  string $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, string $id)
     {
-        return new WalletResource(Wallet::with('currency')->findOrFail($id));
+
+        $wallet = Wallet::with('currency')->findOrFail($id);
+
+        if ($request->input('withbalance') === 'true') {
+
+            $wallet = (new BalanceRepository())->getWalletWithBalance($wallet);
+
+        }
+
+        return new WalletResource($wallet);
     }
 
     /**

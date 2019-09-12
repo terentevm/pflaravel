@@ -16,10 +16,13 @@ class CreateTableDocDebts extends Migration
         Schema::create('doc_debts', function (Blueprint $table) {
             $table->uuid('id')->unique();
             $table->uuid('user_id')->index();
+            $table->enum('type', ['borrow_money', 'repay_money', 'loan_money', 'loan_refund']);
+            $table->boolean('debt_forgiveness')->default(false);
             $table->date('date');
             $table->uuid('wallet_id');
             $table->uuid('contact_id')->index();
-            $table->decimal('sum', 15, 2);
+            $table->decimal('debit', 15, 2);
+            $table->decimal('credit', 15, 2);
 
             $table->timestamps();
 

@@ -23,7 +23,7 @@ class CreateTableDocTransfers extends Migration
             $table->decimal('sum_from', 15, 2);
             $table->decimal('sum_to', 15, 2);
 
-            $table->string('comment', 150);
+            $table->string('comment', 150)->nullable()->default('');
 
             $table->timestamps();
 

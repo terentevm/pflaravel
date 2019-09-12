@@ -20,7 +20,7 @@ class CreateTableDocIncomeRows extends Migration
             $table->uuid('item_id');
             $table->uuid('wallet_id');
             $table->decimal('sum', 15, 2);
-            $table->string('comment')->default('');
+            $table->string('comment')->nullable()->default('');
 
             $table->foreign('user_id')
                 ->references('id')->on('users')

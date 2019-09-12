@@ -27,10 +27,10 @@ BEGIN
 	RETURN QUERY select 
 		temp.wallet_id,
 		ref_wallets.name as wallet,
-                ref_currency.id as fuck,
-                ref_currency.name as currency_id,
-                ref_currency.code as currency_code,
-                ref_currency.short_name as currency_char_code,
+                ref_currencies.id as currency_id,
+                ref_currencies.name as currency_name,
+                ref_currencies.code as currency_code,
+                ref_currencies.short_name as currency_char_code,
                 temp.balance as balance
                 FROM (select
                         trans.wallet_id,
@@ -41,7 +41,7 @@ BEGIN
                 group by
                         trans.wallet_id) as temp
                 left join ref_wallets on temp.wallet_id = ref_wallets.id
-                left join ref_currency on wallets.currency_id = ref_currency.id
+                left join ref_currencies on ref_wallets.currency_id = ref_currencies.id
                 where temp.balance <> 0;
 END;
 $BODY$;');

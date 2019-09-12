@@ -2,7 +2,12 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Event;
+use App\Events\MoneyTransactionEvent;
+use App\Events\RegExpensesEvent;
+use App\Events\RegIncomeEvent;
+use App\Listeners\MoneyTransactionHandler;
+use App\Listeners\RegExpensesListener;
+use App\Listeners\RegIncomeListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,6 +23,18 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+
+        MoneyTransactionEvent::class => [
+            MoneyTransactionHandler::class,
+        ],
+
+        RegExpensesEvent::class => [
+            RegExpensesListener::class,
+        ],
+
+        RegIncomeEvent::class => [
+            RegIncomeListener::class
+        ]
     ];
 
     /**

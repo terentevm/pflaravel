@@ -19,7 +19,8 @@ class Wallet extends ModelByUser
         'currency_id',
         'is_creditcard',
         'grace_period',
-        'credit_limit'
+        'credit_limit',
+        'balance'
     ];
 
     /**
@@ -32,6 +33,8 @@ class Wallet extends ModelByUser
         'grace_period' => 0,
         'credit_limit' => 0
     ];
+
+    protected $guarded = ['balance'];
 
     public function currency()
     {

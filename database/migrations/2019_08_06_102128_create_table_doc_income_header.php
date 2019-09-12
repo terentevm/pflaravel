@@ -17,7 +17,7 @@ class CreateTableDocIncomeHeader extends Migration
             $table->uuid('id')->unique()->index();
             $table->uuid('user_id')->index();
             $table->date('date');
-            $table->string('comment', 150);
+            $table->string('comment', 150)->nullable()->default('');
             $table->decimal('sum', 15, 2);
             $table->timestamps();
 

@@ -4,34 +4,40 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\ItemsIncomeRequest;
+use App\Http\Resources\ItemExpenditureResource;
 use App\ItemIncome;
 
 class ItemsIncomeController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * @param \Illuminate\Http\Request $request
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        $asList = $request->input('list') === "true" ? true : false;
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        if ($asList === true) {
+            $items = ItemIncome::query()->filter($request)->orderBy('name', 'asc')->get();
+
+        } else {
+
+            $with_nested = $request->input('withnested') === "true" ? true : false;
+
+            $parent_id = $request->input('parent') ?? null;
+
+            $items = ItemIncome::findByParent($parent_id, $with_nested);
+        }
+
+        return ItemExpenditureResource::collection($items);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\ItemsIncomeRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function store(ItemsIncomeRequest $request)
@@ -46,23 +52,14 @@ class ItemsIncomeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  string  $id
+     * @return \App\Http\Resources\ItemExpenditureResource
      */
     public function show($id)
     {
-        //
-    }
+        $item = ItemIncome::with('parent')->findOrFail($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return new ItemExpenditureResource($item);
     }
 
     /**
@@ -74,7 +71,17 @@ class ItemsIncomeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $item = ItemIncome::findOrFail($id);
+
+        $formData = $request->all();
+
+        if (!isset($formData['parent_id'])) {
+            $formData['parent_id'] = null;
+        }
+
+        $item->update($formData);
+
+        return response('',200);
     }
 
     /**
@@ -85,6 +92,6 @@ class ItemsIncomeController extends Controller
      */
     public function destroy($id)
     {
-        //
+        ItemIncome::destroy($id);
     }
 }
