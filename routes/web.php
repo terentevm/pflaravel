@@ -12,6 +12,7 @@
 */
 
 Route::get('/', function () {
+    header("Cache-Control: no-cache, must-revalidate");
     return view('index');
 });
 
