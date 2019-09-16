@@ -2,19 +2,15 @@
 /**
  * Created by PhpStorm.
  * User: zaich
- * Date: 19.08.2019
- * Time: 15:13
+ * Date: 14.09.2019
+ * Time: 22:21
  */
 
 namespace App\Filters;
 
-class ExpensesFilters extends FiltersAbstract
+
+class IncomeFilters extends FiltersAbstract
 {
-    /**
-     * Default course filters.
-     *
-     * @var array
-     */
     protected $filters = [
         'begin' => BeginFilter::class,
         'end' => EndFilter::class,

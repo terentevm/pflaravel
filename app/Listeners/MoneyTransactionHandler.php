@@ -97,31 +97,17 @@ class MoneyTransactionHandler
             $records->delete();
         }
 
-        $collapsed_rows = [];
-
-        $model->rows->map(function ($item) use (&$collapsed_rows) {
-
-            if (array_key_exists($item->wallet_id, $collapsed_rows)) {
-                $collapsed_rows[$item->wallet_id] += $item->sum;
-            } else {
-                $collapsed_rows[$item->wallet_id] = floatval($item->sum);
-            }
-
-        });
-
-        foreach ($collapsed_rows as $wallet_id => $sum) {
-            RegMoneyTransaction::create([
-                'user_id' => $model->user_id,
-                'date' => $model->date,
-                'wallet_id' => $wallet_id,
-                'expend_id' => null,
-                'income_id' => $model->id,
-                'transfer_id' => null,
-                'cb_id' => null,
-                'lend_id' => null,
-                'sum' => $sum
-            ]);
-        }
+        RegMoneyTransaction::create([
+            'user_id' => $model->user_id,
+            'date' => $model->date,
+            'wallet_id' => $model->wallet_id,
+            'expend_id' => null,
+            'income_id' => $model->id,
+            'transfer_id' => null,
+            'cb_id' => null,
+            'lend_id' => null,
+            'sum' => floatval($model->sum)
+        ]);
 
     }
 

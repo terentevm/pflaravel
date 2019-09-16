@@ -13,7 +13,6 @@ class IncomeRow extends ModelByUser
         'doc_id',
         'user_id',
         'item_id',
-        'wallet_id',
         'sum',
         'comment'
     ];
@@ -24,12 +23,8 @@ class IncomeRow extends ModelByUser
         'sum' => 'decimal:2',
     ];
 
-    public function wallet()
-    {
-        return $this->belongsTo('App\Wallet', 'wallet_id', 'id');
-    }
 
-    public function items()
+    public function item()
     {
         return $this->belongsTo('App\ItemIncome', 'item_id', 'id');
     }

@@ -2,6 +2,10 @@
 
 namespace App;
 
+use App\Filters\IncomeFilters;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+
 class Income extends ModelByUser
 {
     public $timestamps = true;
@@ -16,6 +20,7 @@ class Income extends ModelByUser
         'id',
         'user_id',
         'date',
+        'wallet_id',
         'sum',
         'comment'
     ];
@@ -31,8 +36,18 @@ class Income extends ModelByUser
         return $this->hasMany('App\IncomeRow', 'doc_id', 'id');
     }
 
+    public function wallet()
+    {
+        return $this->belongsTo('App\Wallet', 'wallet_id', 'id');
+    }
+
     public function getSum($value)
     {
         return floatval($value);
+    }
+
+    public function scopeFilter(Builder $builder, Request $request, array $filters = [])
+    {
+        return (new IncomeFilters($request))->add($filters)->filter($builder);
     }
 }

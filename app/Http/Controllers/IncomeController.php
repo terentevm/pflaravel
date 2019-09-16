@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Events\MoneyTransactionEvent;
 use App\Events\RegIncomeEvent;
+use App\Http\Resources\IncomeResource;
 use App\Income;
+use App\IncomeRow;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -12,12 +14,15 @@ class IncomeController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $incomes = Income::with('wallet')->filter($request)->orderBy('date',
+            'desc')->paginate(15);
+
+        return $incomes;
     }
 
     /**
@@ -30,7 +35,7 @@ class IncomeController extends Controller
     {
         DB::beginTransaction();
 
-        $income = Income::create($request->only(['id', 'date', 'sum', 'comment']));
+        $income = Income::create($request->only(['id', 'date', 'wallet_id', 'sum', 'comment']));
 
         $income->rows()->createMany($request->input('rows'));
 
@@ -48,12 +53,14 @@ class IncomeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Income $income
+     * @param  string $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Income $income)
+    public function show(string $id)
     {
-        //
+        $income = Income::with(['wallet'])->where('id', $id)->first();
+
+        return new IncomeResource($income);
     }
 
 
@@ -61,12 +68,28 @@ class IncomeController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \App\Income $income
+     * @param  string $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Income $income)
+    public function update(Request $request, string $id)
     {
-        //
+        DB::beginTransaction();
+
+        $income = Income::findOrFail($id);
+
+        $rows = IncomeRow::where('doc_id', $id);
+
+        $rows->delete();
+
+        $income->update($request->only(['date', 'wallet_id', 'sum', 'comment']));
+
+        $income->rows()->createMany($request->input('rows'));
+
+        event(new MoneyTransactionEvent($income, 'update'));
+
+        event(new RegIncomeEvent($income));
+
+        DB::commit();
     }
 
     /**
@@ -77,6 +100,6 @@ class IncomeController extends Controller
      */
     public function destroy(Income $income)
     {
-        //
+        $count = $income->destroy();
     }
 }
