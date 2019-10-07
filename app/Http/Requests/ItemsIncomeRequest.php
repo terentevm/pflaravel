@@ -24,7 +24,7 @@ class ItemsIncomeRequest extends FormRequest
     public function rules()
     {
         return [
-            'id' => 'sometimes|required|uuid',
+            'id' => 'sometimes|uuid|nullable',
             'parent_id' => 'sometimes|nullable|uuid',
             'name' => 'required',
             'active' => 'required|boolean'

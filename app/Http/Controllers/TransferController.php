@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\MoneyTransactionEvent;
+use App\Http\Resources\TransferResource;
 use App\Transfer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,9 +15,12 @@ class TransferController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $transfers = Transfer::with(['walletFrom', 'walletTo'])->filter($request)->orderBy('date',
+            'desc')->paginate(15);
+
+        return $transfers;
     }
 
 
@@ -53,12 +57,13 @@ class TransferController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Transfer  $transfer
-     * @return \Illuminate\Http\Response
+     * @param  string $id
+     * @return \App\Http\Resources\TransferResource
      */
-    public function show(Transfer $transfer)
+    public function show(string $id)
     {
 
+        return new TransferResource(Transfer::with(['walletFrom', 'walletTo'])->findOrFail($id));
 
     }
 
@@ -97,6 +102,6 @@ class TransferController extends Controller
      */
     public function destroy(Transfer $transfer)
     {
-        //
+        $transfer->destroy();
     }
 }

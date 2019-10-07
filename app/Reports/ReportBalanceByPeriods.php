@@ -61,6 +61,7 @@ class ReportBalanceByPeriods extends ReportAbstract
             Auth::user()->id,
             $this->dateBegin->format('Y-m-d'),
             $this->dateEnd->format('Y-m-d'),
+            $this->reportCurrency->id,
             $this->periodicity
         );
 

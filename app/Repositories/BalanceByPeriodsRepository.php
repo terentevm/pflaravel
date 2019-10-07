@@ -16,14 +16,16 @@ class BalanceByPeriodsRepository
         string $userId,
         string $begin,
         string $end,
+        string $currencyId,
         string $periodicity
     ) {
         $result = DB::select(
-            'select * from balance_by_periods(?,?,?,?)',
+            'select * from balance_by_periods(?,?,?,?,?)',
             [
                 $userId,
                 $begin,
                 $end,
+                $currencyId,
                 $this->convertPeriodicityToPostgresFormat($periodicity)
             ]
         );

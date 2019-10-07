@@ -2,7 +2,10 @@
 
 namespace App;
 
+use App\Filters\TransferFilters;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class Transfer extends ModelByUser
 {
@@ -26,6 +29,11 @@ class Transfer extends ModelByUser
     ];
 
     protected $hidden = ['user_id'];
+
+    public function scopeFilter(Builder $builder, Request $request, array $filters = [])
+    {
+        return (new TransferFilters($request))->add($filters)->filter($builder);
+    }
 
     public function walletFrom()
     {
