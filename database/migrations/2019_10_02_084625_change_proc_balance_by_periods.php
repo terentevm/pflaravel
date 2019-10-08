@@ -42,9 +42,9 @@ BEGIN
                p_period
                  ) as b_by_periods
                left join rates_validity as wc_rates
-                 on wc_rates.user_id = p_user_id and b_by_periods.currency_id = wc_rates.currency_id and wc_rates.validity @> b_by_periods.period
+                 on wc_rates.user_id = p_user_id and b_by_periods.currency_id = wc_rates.currency_id and wc_rates.validity @> end_of_month(b_by_periods.period)::date
                left join rates_validity as rep_rates
-                 on rep_rates.user_id = p_user_id and rep_rates.currency_id = p_currency_id and rep_rates.validity @> b_by_periods.period
+                 on rep_rates.user_id = p_user_id and rep_rates.currency_id = p_currency_id and rep_rates.validity @> end_of_month(b_by_periods.period)::date
         ) as sub
   group by
            sub.period
