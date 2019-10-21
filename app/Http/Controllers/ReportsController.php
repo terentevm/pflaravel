@@ -6,6 +6,7 @@ use App\Reports\Incomes\ReportIncomes;
 use App\Reports\ReportBalanceByPeriods;
 use App\Reports\ReportBalanceTotal;
 use App\Reports\Expenses\ReportExpenses;
+use App\Reports\ReportCompareExpensesIncomesByPeriods;
 use Illuminate\Http\Request;
 
 class ReportsController extends Controller
@@ -34,5 +35,10 @@ class ReportsController extends Controller
     public function balanceByPeriods(Request $request)
     {
         return response()->json((new ReportBalanceByPeriods($request))->execute());
+    }
+
+    public function compareExpensesIncomesByPeriods(Request $request)
+    {
+        return response()->json((new ReportCompareExpensesIncomesByPeriods($request))->execute());
     }
 }

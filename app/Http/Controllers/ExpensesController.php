@@ -104,13 +104,13 @@ class ExpensesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param  string $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $expense = Expense::findOrFail($id);
+        $count = Expense::destroy($id);
 
-        $count = $expense->destroy();
+        return $count > 0 ? response('DELETED',200) : response('NOT DELETED',500);
     }
 }

@@ -42,4 +42,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('reports/expenses', 'ReportsController@expenses');
     Route::post('reports/incomes', 'ReportsController@incomes');
     Route::post('reports/balance-by-periods', 'ReportsController@balanceByPeriods');
+    Route::post('reports/compare-expenses-incomes', 'ReportsController@compareExpensesIncomesByPeriods');
+
 });

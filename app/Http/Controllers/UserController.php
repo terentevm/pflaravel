@@ -9,6 +9,7 @@ use App\User;
 use App\Currency;
 use App\Settings;
 use App\Rates;
+use App\Http\Resources\SettingsResource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -55,7 +56,8 @@ class UserController extends Controller
             $success['token'] = $user->createToken('MyApp')->accessToken;
 
             $settings = Settings::with('currency')->with('wallet')->with('reportcurrency')->first();
-            $success['settings'] = $settings;
+            
+            $success['settings'] = new SettingsResource($settings);
 
             return response()->json($success, $this->successStatus);
         } else {
