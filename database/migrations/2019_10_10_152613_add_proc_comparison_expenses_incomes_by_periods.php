@@ -40,9 +40,6 @@ class AddProcComparisonExpensesIncomesByPeriods extends Migration
     
     END;
     $$;');
-
-        DB::statement('alter function comparison_expenses_incomes_by_periods(uuid, date, date, uuid)
-  owner to postgres;');
     }
 
     /**
