@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\ChangeBalance;
+use App\Events\MoneyTransactionEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Events\MoneyTransactionEvent;
 
 class ChangeBalanceController extends Controller
 {
@@ -28,6 +28,10 @@ class ChangeBalanceController extends Controller
      */
     public function store(Request $request)
     {
+        if ($request->user()->cant('createCheckRowLimit', \App\ModelByUser::class)) {
+            abort(403, "Rows limit exceeded for user!");
+        }
+
         DB::beginTransaction();
 
         $cb = ChangeBalance::create($request->only([

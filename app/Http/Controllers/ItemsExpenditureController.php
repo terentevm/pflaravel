@@ -6,6 +6,7 @@ use App\Http\Requests\ItemsExpenditureRequest;
 use App\Http\Resources\ItemExpenditureResource;
 use App\ItemExpenditure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ItemsExpenditureController extends Controller
 {
@@ -44,6 +45,10 @@ class ItemsExpenditureController extends Controller
      */
     public function store(ItemsExpenditureRequest $request)
     {
+        if (!Auth::user()->can('createCheckRowLimit', \App\ModelByUser::class)) {
+            abort(403, "Rows limit exceeded for user!");
+        }
+
         $item = ItemExpenditure::create($request->all());
 
         return response()->json([
@@ -85,7 +90,7 @@ class ItemsExpenditureController extends Controller
 
         $item->update($formData);
 
-        return response('',200);
+        return response('', 200);
     }
 
     /**

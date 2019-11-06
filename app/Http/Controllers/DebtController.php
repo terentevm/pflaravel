@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Debt;
+use App\Events\MoneyTransactionEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Events\MoneyTransactionEvent;
 
 class DebtController extends Controller
 {
@@ -27,6 +27,10 @@ class DebtController extends Controller
      */
     public function store(Request $request)
     {
+        if ($request->user()->cant('createCheckRowLimit', \App\ModelByUser::class)) {
+            abort(403, "Rows limit exceeded for user!");
+        }
+
         DB::beginTransaction();
 
         $debt = Debt::create($request->only([

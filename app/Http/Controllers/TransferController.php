@@ -32,6 +32,10 @@ class TransferController extends Controller
      */
     public function store(Request $request)
     {
+        if ($request->user()->cant('createCheckRowLimit', \App\ModelByUser::class)) {
+            abort(403, "Rows limit exceeded for user!");
+        }
+
         DB::beginTransaction();
 
         $transfer = Transfer::create($request->only([

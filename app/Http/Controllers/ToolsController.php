@@ -12,6 +12,10 @@ class ToolsController extends Controller
 {
     public function loadRates(LoadRatesRequest $request)
     {
+        if ($request->user()->cant('createCheckRowLimit', \App\ModelByUser::class)) {
+            abort(403, "Rows limit exceeded for user!");
+        }
+
         $currencies = Currency::find($request->input('currencies'))->all();
         $settings = Settings::with('currency')->first();
 

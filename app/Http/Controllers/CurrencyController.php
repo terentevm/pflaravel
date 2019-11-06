@@ -48,6 +48,10 @@ class CurrencyController extends Controller
      */
     public function store(CurrencyRequest $request)
     {
+        if ($request->user()->cant('createCheckRowLimit', \App\ModelByUser::class)) {
+            abort(403, "Rows limit exceeded for user!");
+        }
+
         $input = $request->all();
 
         $currency = Currency::create($input);

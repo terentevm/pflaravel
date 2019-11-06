@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\WalletRequest;
 use App\Http\Resources\WalletResource;
 use App\Http\Resources\WalletResourceCollection;
 use App\Repositories\BalanceRepository;
 use App\Wallet;
+use Illuminate\Http\Request;
 
 class WalletsController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\WalletResourceCollection
      */
     public function index()
     {
@@ -30,11 +30,15 @@ class WalletsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Http\Requests\WalletRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(WalletRequest $request)
     {
+        if ($request->user()->cant('createCheckRowLimit', \App\ModelByUser::class)) {
+            abort(403, "Rows limit exceeded for user!");
+        }
+
         $wallet = Wallet::create($request->all());
 
         return response()->json([

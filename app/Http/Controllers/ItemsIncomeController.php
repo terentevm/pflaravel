@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\ItemsIncomeRequest;
 use App\Http\Resources\ItemExpenditureResource;
 use App\ItemIncome;
+use Illuminate\Http\Request;
 
 class ItemsIncomeController extends Controller
 {
@@ -17,6 +17,10 @@ class ItemsIncomeController extends Controller
      */
     public function index(Request $request)
     {
+        if ($request->user()->cant('createCheckRowLimit', \App\ModelByUser::class)) {
+            abort(403, "Rows limit exceeded for user!");
+        }
+
         $asList = $request->input('list') === "true" ? true : false;
 
         if ($asList === true) {

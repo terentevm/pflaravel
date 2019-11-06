@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Repositories\UserRepository;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
@@ -25,7 +25,12 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'id', 'name', 'login', 'password',
+        'id',
+        'name',
+        'login',
+        'password',
+        'admin',
+        'total_row_limit'
     ];
 
     /**
@@ -40,5 +45,32 @@ class User extends Authenticatable
     public function settings()
     {
         return $this->hasOne('App\Settings', 'user_id', 'id');
+    }
+
+    /**
+     * Check if user is admin
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return $this->attributes['admin'];
+    }
+
+    /**
+     * Return rows limit defined for user
+     * @return int
+     */
+    public function getRowsLimit(): int
+    {
+        return $this->attributes['total_row_limit'];
+    }
+
+    /**
+     * Return total rows count by user_id for all tables in db
+     * @return int
+     */
+    public function getTotalRowsCount(): int
+    {
+        return UserRepository::getTotalRowsByUser($this);
     }
 }

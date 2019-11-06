@@ -11,14 +11,4 @@
 |
 */
 
-Route::get('/', function () {
-    header("Cache-Control: no-cache, must-revalidate");
-    return view('index');
-});
-
-Route::get('/conf', function () {
-    dd(config('money.baseCurrencyList'));
-});
-
-Route::get('/expenses', 'ExpensesController@index');
-Route::get('/testbalance', 'ReportsController@balance');
+Route::get('/', 'MainController@index');
