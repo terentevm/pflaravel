@@ -10,12 +10,14 @@ use App\Http\Resources\CurrencyResource;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+
 class CurrencyController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * @param  \Illuminate\Http\Request $request
      *
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\CurrencyCollectionResource;
      */
     public function index(Request $request)
     {
@@ -43,7 +45,7 @@ class CurrencyController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Http\Requests\CurrencyRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(CurrencyRequest $request)
@@ -64,10 +66,10 @@ class CurrencyController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @param  string $id
+     * @return \App\Http\Resources\CurrencyResource
      */
-    public function show($id)
+    public function show(string $id)
     {
         return new CurrencyResource(Currency::findOrFail($id));
     }
@@ -76,25 +78,28 @@ class CurrencyController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
+     * @param  \App\Http\Requests\CurrencyUpdateRequest $request
+     * @param  string $id
      * @return \Illuminate\Http\Response
      */
-    public function update(CurrencyUpdateRequest $request, $id)
+    public function update(CurrencyUpdateRequest $request, string $id)
     {
         $currency = Currency::findOrFail($id);
 
         $currency->update($request->all());
+
+        return response("OK", 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param  string $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(string $id)
     {
-        Currency::destroy($id);
+        $count = Currency::destroy($id);
+        return $count > 0 ? response('DELETED',200) : response('NOT DELETED',500);
     }
 }
