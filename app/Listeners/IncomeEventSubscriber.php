@@ -34,7 +34,7 @@ class IncomeEventSubscriber
         );
 
         $events->listen(
-            'App\Events\ExpenseUpdate',
+            'App\Events\IncomeUpdate',
             'App\Listeners\IncomeEventSubscriber@handleIncomeUpdate'
         );
     }
