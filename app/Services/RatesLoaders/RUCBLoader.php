@@ -62,7 +62,7 @@ class RUCBLoader implements IRatesLoader
 
                     $rate_date = $this->getDateFromStr($data[0]);
 
-                    if ($rate_date <= $date1 || $rate_date >= $date2) {
+                    if ($rate_date < $date1 || $rate_date > $date2) {
                         continue;
                     }
 
@@ -86,7 +86,7 @@ class RUCBLoader implements IRatesLoader
 
     function getDateFromStr($dateStr)
     {
-        $d = \DateTime::createFromFormat('Ymd', $dateStr);
+        $d = (\DateTime::createFromFormat('Ymd', $dateStr))->setTime(0, 0, 0);
 
         return $d;
     }
