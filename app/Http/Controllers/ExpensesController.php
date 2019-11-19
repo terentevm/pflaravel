@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\MoneyTransactionEvent;
-use App\Events\RegExpensesEvent;
+use App\Events\ExpenseCreate;
+use App\Events\ExpenseUpdate;
 use App\Expense;
 use App\ExpenseRow;
 use App\Http\Resources\ExpenseResource;
@@ -51,9 +51,7 @@ class ExpensesController extends Controller
 
         $expense->rows()->createMany($request->input('rows'));
 
-        event(new MoneyTransactionEvent($expense, 'create'));
-
-        event(new RegExpensesEvent($expense));
+        event(new ExpenseCreate($expense));
 
         DB::commit();
 
@@ -98,11 +96,11 @@ class ExpensesController extends Controller
 
         $expense->rows()->createMany($request->input('rows'));
 
-        event(new MoneyTransactionEvent($expense, 'update'));
-
-        event(new RegExpensesEvent($expense));
+        event(new ExpenseUpdate($expense));
 
         DB::commit();
+
+        return response("OK", 200);
     }
 
     /**
@@ -111,7 +109,7 @@ class ExpensesController extends Controller
      * @param  string $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(string $id)
     {
         $count = Expense::destroy($id);
 

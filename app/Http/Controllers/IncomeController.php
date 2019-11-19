@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\MoneyTransactionEvent;
-use App\Events\RegIncomeEvent;
+use App\Events\IncomeCreate;
+use App\Events\IncomeUpdate;
 use App\Http\Resources\IncomeResource;
 use App\Income;
 use App\IncomeRow;
@@ -43,9 +43,7 @@ class IncomeController extends Controller
 
         $income->rows()->createMany($request->input('rows'));
 
-        event(new MoneyTransactionEvent($income, 'create'));
-
-        event(new RegIncomeEvent($income));
+        event(new IncomeCreate($income));
 
         DB::commit();
 
@@ -58,7 +56,7 @@ class IncomeController extends Controller
      * Display the specified resource.
      *
      * @param  string $id
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\IncomeResource
      */
     public function show(string $id)
     {
@@ -89,11 +87,11 @@ class IncomeController extends Controller
 
         $income->rows()->createMany($request->input('rows'));
 
-        event(new MoneyTransactionEvent($income, 'update'));
-
-        event(new RegIncomeEvent($income));
+        event(new IncomeUpdate($income));
 
         DB::commit();
+
+        return response("OK", 200);
     }
 
     /**
@@ -105,5 +103,6 @@ class IncomeController extends Controller
     public function destroy(Income $income)
     {
         $count = $income->destroy();
+        return $count > 0 ? response('DELETED', 200) : response('NOT DELETED', 500);
     }
 }

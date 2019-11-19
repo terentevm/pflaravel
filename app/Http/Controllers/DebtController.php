@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Debt;
+use App\Events\DebtCreate;
+use App\Events\DebtUpdate;
 use App\Events\MoneyTransactionEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +18,7 @@ class DebtController extends Controller
      */
     public function index()
     {
-        //
+        //ToDo To write out debt index method
     }
 
     /**
@@ -44,7 +46,7 @@ class DebtController extends Controller
             'credit',
         ]));
 
-        event(new MoneyTransactionEvent($debt, 'create'));
+        event(new DebtCreate($debt));
 
         DB::commit();
 
@@ -61,7 +63,7 @@ class DebtController extends Controller
      */
     public function show(Debt $debt)
     {
-        //
+        //ToDo To write out debt show method
     }
 
 
@@ -87,19 +89,22 @@ class DebtController extends Controller
             'credit',
         ]));
 
-        event(new MoneyTransactionEvent($debt, 'update'));
+        event(new DebtUpdate($debt));
 
         DB::commit();
+
+        return response("OK", 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Debt  $debt
+     * @param  string $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Debt $debt)
+    public function destroy(string $id)
     {
-        //
+        $count = Debt::destroy($id);
+        return $count > 0 ? response('DELETED', 200) : response('NOT DELETED', 500);
     }
 }

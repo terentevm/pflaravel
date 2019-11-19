@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\MoneyTransactionEvent;
+use App\Events\TransferCreate;
+use App\Events\TransferUpdate;
 use App\Http\Resources\TransferResource;
 use App\Transfer;
 use Illuminate\Http\Request;
@@ -12,7 +13,7 @@ class TransferController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -48,7 +49,7 @@ class TransferController extends Controller
             'comment'
         ]));
 
-        event(new MoneyTransactionEvent($transfer, 'create'));
+        event(new TransferCreate($transfer));
 
         DB::commit();
 
@@ -93,19 +94,22 @@ class TransferController extends Controller
             'comment'
         ]));
 
-        event(new MoneyTransactionEvent($transfer, 'update'));
+        event(new TransferUpdate($transfer));
 
         DB::commit();
+
+        return response("OK", 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Transfer  $transfer
+     * @param  string $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Transfer $transfer)
+    public function destroy(string $id)
     {
-        $transfer->destroy();
+        $count = Transfer::destroy($id);
+        return $count > 0 ? response('DELETED', 200) : response('NOT DELETED', 500);
     }
 }

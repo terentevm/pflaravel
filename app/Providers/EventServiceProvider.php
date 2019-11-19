@@ -19,24 +19,20 @@ class EventServiceProvider extends ServiceProvider
      *
      * @var array
      */
-    protected $listen = [
-        Registered::class => [
-            SendEmailVerificationNotification::class,
-        ],
+    protected $listen = [];
 
-        MoneyTransactionEvent::class => [
-            MoneyTransactionHandler::class,
-        ],
-
-        RegExpensesEvent::class => [
-            RegExpensesListener::class,
-        ],
-
-        RegIncomeEvent::class => [
-            RegIncomeListener::class
-        ]
+    /**
+     * The subscriber classes to register.
+     *
+     * @var array
+     */
+    protected $subscribe = [
+        'App\Listeners\ExpenseEventSubscriber',
+        'App\Listeners\IncomeEventSubscriber',
+        'App\Listeners\TransferEventSubscriber',
+        'App\Listeners\DebtEventSubscriber',
+        'App\Listeners\ChangeBalanceEventSubscriber',
     ];
-
     /**
      * Register any events for your application.
      *

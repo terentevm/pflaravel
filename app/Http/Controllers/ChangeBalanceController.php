@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\ChangeBalance;
+use App\Events\ChangeBalanceCreate;
 use App\Events\MoneyTransactionEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -43,7 +44,7 @@ class ChangeBalanceController extends Controller
             'sum_income'
         ]));
 
-        event(new MoneyTransactionEvent($cb, 'create'));
+        event(new ChangeBalanceCreate($cb));
 
         DB::commit();
 
@@ -71,11 +72,11 @@ class ChangeBalanceController extends Controller
      * @param  \App\ChangeBalance  $changeBalance
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ChangeBalance $changeBalance)
+    public function update(Request $request, ChangeBalance $cb)
     {
         DB::beginTransaction();
 
-        $changeBalance->update($request->only([
+        $cb->update($request->only([
             'id',
             'date',
             'wallet_id',
@@ -84,7 +85,7 @@ class ChangeBalanceController extends Controller
             'sum_income'
         ]));
 
-        event(new MoneyTransactionEvent($changeBalance, 'update'));
+        event(new ChangeBalanceUpdate($cb));
 
         DB::commit();
     }
