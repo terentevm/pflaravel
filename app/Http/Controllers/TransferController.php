@@ -18,10 +18,9 @@ class TransferController extends Controller
      */
     public function index(Request $request)
     {
-        $transfers = Transfer::with(['walletFrom', 'walletTo'])->filter($request)->orderBy('date',
+        return Transfer::with(['walletFrom', 'walletTo'])->filter($request)->orderBy('date',
             'desc')->paginate(15);
 
-        return $transfers;
     }
 
 

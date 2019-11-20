@@ -19,10 +19,8 @@ class IncomeController extends Controller
      */
     public function index(Request $request)
     {
-        $incomes = Income::with('wallet')->filter($request)->orderBy('date',
-            'desc')->paginate(15);
+        return Income::with('wallet')->filter($request)->orderBy('date', 'desc')->paginate(15);
 
-        return $incomes;
     }
 
     /**

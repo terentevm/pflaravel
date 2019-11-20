@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Contact;
+use App\Http\Requests\ContactRequest;
+use App\Http\Requests\ContactUpdateRequest;
 use App\Http\Resources\ContactResource;
-use Illuminate\Http\Request;
 
 class ContactsController extends Controller
 {
@@ -21,16 +22,16 @@ class ContactsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\ContactRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ContactRequest $request)
     {
         if ($request->user()->cant('createCheckRowLimit', \App\ModelByUser::class)) {
             abort(403, "Rows limit exceeded for user!");
         }
 
-        $contact = Contact::create($request->all());
+        $contact = Contact::create($request->only(['id', 'name', 'phone', 'email']));
 
         return response()->json([
             'id' => $contact->id
@@ -52,28 +53,28 @@ class ContactsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\ContactUpdateRequest $request
      * @param  string  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, string $id)
+    public function update(ContactUpdateRequest $request, string $id)
     {
         $contact = Contact::findOrFail($id);
 
-        $contact->update($request->all());
+        $contact->update($request->only(['name', 'phone', 'email']));
 
-        return response()->setStatusCode(200);
+        return response("OK", 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  string $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(string $id)
     {
-        $contact = Contact::findOrFail($id);
-        $contact->delete();
+        $count = Contact::destroy($id);
+        return $count > 0 ? response('DELETED', 200) : response('NOT DELETED', 500);
     }
 }

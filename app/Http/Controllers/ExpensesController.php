@@ -19,10 +19,9 @@ class ExpensesController extends Controller
      */
     public function index(Request $request)
     {
-        $expenses = Expense::with('wallet')->filter($request)->orderBy('date',
+        return Expense::with('wallet')->filter($request)->orderBy('date',
             'desc')->paginate(15);
 
-        return $expenses;
     }
 
 
