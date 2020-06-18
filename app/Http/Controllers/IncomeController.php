@@ -19,7 +19,10 @@ class IncomeController extends Controller
      */
     public function index(Request $request)
     {
-        return Income::with('wallet')->filter($request)->orderBy('date', 'desc')->paginate(15);
+        return Income::with('wallet')
+            ->filter($request)
+            ->orderBy('date', 'desc')
+            ->paginate($this->paginationCount);
 
     }
 
@@ -95,12 +98,13 @@ class IncomeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Income $income
+     * @param  string $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Income $income)
+    public function destroy(string $id)
     {
-        $count = $income->destroy();
+        $count = Income::destroy($id);
+
         return $count > 0 ? response('DELETED', 200) : response('NOT DELETED', 500);
     }
 }

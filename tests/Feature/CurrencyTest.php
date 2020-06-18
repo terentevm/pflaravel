@@ -38,7 +38,15 @@ class CurrencyTest extends TestCase
             'short_name' => 'CZK'
         ];
 
-        $response = $this->json('POST', '/api/currencies', $data, $this->getHeaders());
+        $token = $this->getToken();
+
+        $headers = [
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'Authorization' => "Bearer $token"
+        ];
+
+        $response = $this->json('POST', '/api/currencies', $data, $headers);
         $response->assertStatus(201);
 
     }

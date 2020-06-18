@@ -15,8 +15,8 @@ class BeginFilter extends FilterAbstract
     /**
      * Filter by course type.
      *
-     * @param  string $type
      * @return Illuminate\Database\Eloquent\Builder
+     * @param  string $type
      */
     public function filter(Builder $builder, $value)
     {

@@ -20,7 +20,7 @@ class ExpensesController extends Controller
     public function index(Request $request)
     {
         return Expense::with('wallet')->filter($request)->orderBy('date',
-            'desc')->paginate(15);
+            'desc')->paginate($this->paginationCount);
 
     }
 

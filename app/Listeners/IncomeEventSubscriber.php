@@ -50,6 +50,10 @@ class IncomeEventSubscriber
     {
         $records = RegMoneyTransaction::where('income_id', $event->model->id);
         $records->delete();
+
+        $this->addToMoneyTransactionRegister($event->model);
+
+        $this->AddToIncomeRegister($event->model);
     }
 
     private function addToMoneyTransactionRegister(Income $income)
