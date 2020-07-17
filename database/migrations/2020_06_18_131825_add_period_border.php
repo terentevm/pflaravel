@@ -14,7 +14,7 @@ class AddPeriodBorder extends Migration
     public function up()
     {
         Schema::table('settings', function (Blueprint $table) {
-            //
+            $table->date('period_border')->default('2010-01-01');
         });
     }
 
@@ -26,7 +26,7 @@ class AddPeriodBorder extends Migration
     public function down()
     {
         Schema::table('settings', function (Blueprint $table) {
-            //
+            $table->dropColumn('period_border');
         });
     }
 }

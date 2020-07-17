@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\ChangeBalance;
-use App\Events\ChangeBalanceCreate;
-use App\Events\MoneyTransactionEvent;
+use App\Jobs\Documents\ChangeBalance\CreateChangeBalance;
+use App\Jobs\Documents\ChangeBalance\UpdateChangeBalance;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ChangeBalanceController extends Controller
 {
@@ -33,20 +33,19 @@ class ChangeBalanceController extends Controller
             abort(403, "Rows limit exceeded for user!");
         }
 
-        DB::beginTransaction();
-
-        $cb = ChangeBalance::create($request->only([
-            'id',
-            'date',
-            'wallet_id',
-            'new_balance',
-            'sum_expend',
-            'sum_income'
-        ]));
-
-        event(new ChangeBalanceCreate($cb));
-
-        DB::commit();
+        $cb = $this->dispatch(
+            new CreateChangeBalance(
+                Auth::user(),
+                $request->only([
+                    'id',
+                    'date',
+                    'wallet_id',
+                    'new_balance',
+                    'sum_expend',
+                    'sum_income'
+                ])
+            )
+        );
 
         return response()->json([
             'id' => $cb->id
@@ -69,25 +68,26 @@ class ChangeBalanceController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\ChangeBalance  $changeBalance
+     * @param  \App\ChangeBalance  $cb
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, ChangeBalance $cb)
     {
-        DB::beginTransaction();
 
-        $cb->update($request->only([
-            'id',
-            'date',
-            'wallet_id',
-            'new_balance',
-            'sum_expend',
-            'sum_income'
-        ]));
+        $this->dispatch(
+            new UpdateChangeBalance(
+                $cb,
+                $request->only([
+                'id',
+                'date',
+                'wallet_id',
+                'new_balance',
+                'sum_expend',
+                'sum_income'
+            ]))
+        );
 
-        event(new ChangeBalanceUpdate($cb));
-
-        DB::commit();
+        return response("OK", 200);
     }
 
     /**

@@ -5,7 +5,8 @@ namespace App\Listeners;
 use App\ChangeBalance;
 use App\Events\ChangeBalanceCreate;
 use App\Events\ChangeBalanceUpdate;
-use App\RegMoneyTransaction;
+use App\Enums\DocumentType;
+use App\Enums\TransactionType;
 
 class ChangeBalanceEventSubscriber
 {
@@ -40,28 +41,37 @@ class ChangeBalanceEventSubscriber
 
     public function handleChangeBalanceCreate(ChangeBalanceCreate $event)
     {
-        $this->addToMoneyTransactionRegister($event->model);
+        $this->createMoneyTransaction($event->model);
     }
 
     public function handleChangeBalanceUpdate(ChangeBalanceUpdate $event)
     {
-        $records = RegMoneyTransaction::where('cb_id', $event->model->id);
-        $records->delete();
-
-        $this->addToMoneyTransactionRegister($event->model);
+        $this->updateMoneyTransaction($event->model);
     }
 
-    private function addToMoneyTransactionRegister(ChangeBalance $cb)
+    private function createMoneyTransaction(ChangeBalance $cb)
     {
-        RegMoneyTransaction::create([
+        $t_type = $cb->sum_income > 0 ? TransactionType::Income : TransactionType::Expense;
+
+        $cb->transactionReg()->create([
             'user_id' => $cb->user_id,
             'date' => $cb->date,
             'wallet_id' => $cb->wallet_id,
-            'expend_id' => null,
-            'income_id' => null,
-            'transfer_id' => null,
-            'cb_id' => $cb->id,
-            'lend_id' => null,
+            'document_id' => $cb->id,
+            'document_type' => DocumentType::ChangeBalance,
+            'type' => $t_type,
+            'sum' => $cb->sum_income > 0 ? $cb->sum_income : $cb->sum_expend * -1
+        ]);
+    }
+
+    private function updateMoneyTransaction(ChangeBalance $cb)
+    {
+        $t_type = $cb->sum_income > 0 ? TransactionType::Income : TransactionType::Expense;
+
+        $cb->transactionReg()->update([
+            'date' => $cb->date,
+            'wallet_id' => $cb->wallet_id,
+            'type' => $t_type,
             'sum' => $cb->sum_income > 0 ? $cb->sum_income : $cb->sum_expend * -1
         ]);
     }

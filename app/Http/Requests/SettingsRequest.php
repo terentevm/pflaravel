@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SettingsRequest extends FormRequest
 {
@@ -26,7 +27,11 @@ class SettingsRequest extends FormRequest
         return [
             'currency_id' => 'uuid',
             'wallet_id' => 'uuid|nullable',
-            'report_currency' => 'uuid|nullable'
+            'report_currency' => 'uuid|nullable',
+            'periodicity' => [
+                'required',
+                Rule::in(['year', 'quarter', 'month', 'week', 'day']),
+            ]
         ];
     }
 }

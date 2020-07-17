@@ -2,10 +2,11 @@
 
 namespace App\Listeners;
 
+use App\Enums\DocumentType;
+use App\Enums\TransactionType;
 use App\Events\IncomeCreate;
 use App\Events\IncomeUpdate;
 use App\Income;
-use App\RegMoneyTransaction;
 use Illuminate\Support\Facades\DB;
 
 class IncomeEventSubscriber
@@ -41,32 +42,36 @@ class IncomeEventSubscriber
 
     public function handleIncomeCreate(IncomeCreate $event)
     {
-        $this->addToMoneyTransactionRegister($event->model);
+        $this->createMoneyTransaction($event->model);
         $this->AddToIncomeRegister($event->model);
 
     }
 
     public function handleIncomeUpdate(IncomeUpdate $event)
     {
-        $records = RegMoneyTransaction::where('income_id', $event->model->id);
-        $records->delete();
-
-        $this->addToMoneyTransactionRegister($event->model);
+        $this->updateMoneyTransaction($event->model);
 
         $this->AddToIncomeRegister($event->model);
     }
 
-    private function addToMoneyTransactionRegister(Income $income)
+    private function createMoneyTransaction(Income $income)
     {
-        RegMoneyTransaction::create([
+        $income->transactionReg()->create([
             'user_id' => $income->user_id,
             'date' => $income->date,
             'wallet_id' => $income->wallet_id,
-            'expend_id' => null,
-            'income_id' => $income->id,
-            'transfer_id' => null,
-            'cb_id' => null,
-            'lend_id' => null,
+            'document_id' => $income->id,
+            'document_type' => DocumentType::Income,
+            'type' => TransactionType::Income,
+            'sum' => floatval($income->sum)
+        ]);
+    }
+
+    private function updateMoneyTransaction(Income $income)
+    {
+        $income->transactionReg()->update([
+            'date' => $income->date,
+            'wallet_id' => $income->wallet_id,
             'sum' => floatval($income->sum)
         ]);
     }

@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Events\TransferCreate;
 use App\Events\TransferUpdate;
 use App\Http\Resources\TransferResource;
+use App\Jobs\Documents\Transfer\CreateTransfer;
+use App\Jobs\Documents\Transfer\UpdateTransfer;
 use App\Transfer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class TransferController extends Controller
@@ -36,21 +39,20 @@ class TransferController extends Controller
             abort(403, "Rows limit exceeded for user!");
         }
 
-        DB::beginTransaction();
-
-        $transfer = Transfer::create($request->only([
-            'id',
-            'date',
-            'wallet_id_from',
-            'wallet_id_to',
-            'sum_from',
-            'sum_to',
-            'comment'
-        ]));
-
-        event(new TransferCreate($transfer));
-
-        DB::commit();
+        $transfer = $this->dispatch(
+            new CreateTransfer(
+                Auth::user(),
+                $request->only([
+                    'id',
+                    'date',
+                    'wallet_id_from',
+                    'wallet_id_to',
+                    'sum_from',
+                    'sum_to',
+                    'comment'
+                ])
+            )
+        );
 
         return response()->json([
             'id' => $transfer->id
@@ -81,21 +83,21 @@ class TransferController extends Controller
      */
     public function update(Request $request, Transfer $transfer)
     {
-        DB::beginTransaction();
 
-        $transfer->update($request->only([
-            'id',
-            'date',
-            'wallet_id_from',
-            'wallet_id_to',
-            'sum_from',
-            'sum_to',
-            'comment'
-        ]));
-
-        event(new TransferUpdate($transfer));
-
-        DB::commit();
+        $this->dispatch(
+            new UpdateTransfer(
+                $transfer,
+                $request->only([
+                    'id',
+                    'date',
+                    'wallet_id_from',
+                    'wallet_id_to',
+                    'sum_from',
+                    'sum_to',
+                    'comment'
+                ])
+            )
+        );
 
         return response("OK", 200);
     }

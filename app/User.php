@@ -73,4 +73,13 @@ class User extends Authenticatable
     {
         return UserRepository::getTotalRowsByUser($this);
     }
+
+    /**
+     * Return user id
+     * @return string
+     */
+    public function getUserId() : string
+    {
+       return $this->attributes['id'];
+    }
 }

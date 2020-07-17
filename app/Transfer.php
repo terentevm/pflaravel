@@ -45,4 +45,9 @@ class Transfer extends ModelByUser
         return $this->belongsTo('App\Wallet', 'wallet_id_to', 'id');
     }
 
+    public function transactionReg()
+    {
+        return $this->hasMany('App\RegMoneyTransaction', 'document_id', 'id');
+    }
+
 }

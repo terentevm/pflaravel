@@ -11,7 +11,7 @@ use BenSampo\Enum\Enum;
  * @method static static Debt()
  * @method static static ChangeBalance()
  */
-final class TransactionType extends Enum
+final class DocumentType extends Enum
 {
     const Income =   'income';
     const Expense =   'expense';

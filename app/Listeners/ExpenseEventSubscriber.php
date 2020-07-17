@@ -6,7 +6,8 @@ use App\Events\ExpenseUpdate;
 use Illuminate\Support\Facades\DB;
 use App\Events\ExpenseCreate;
 use App\Expense;
-use App\RegMoneyTransaction;
+use App\Enums\DocumentType;
+use App\Enums\TransactionType;
 
 class ExpenseEventSubscriber
 {
@@ -47,7 +48,7 @@ class ExpenseEventSubscriber
      */
     public function handleExpenseCreate(ExpenseCreate $event)
     {
-        $this->addToMoneyTransactionRegister($event->model);
+        $this->createMoneyTransaction($event->model);
         $this->AddToExpensesRegister($event->model);
     }
 
@@ -59,26 +60,30 @@ class ExpenseEventSubscriber
      */
     public function handleExpenseUpdate(ExpenseUpdate $event)
     {
-        $records = RegMoneyTransaction::where('expend_id', $event->model->id);
-        $records->delete();
-
-        $this->addToMoneyTransactionRegister($event->model);
+        $this->updateMoneyTransaction($event->model);
 
         $this->AddToExpensesRegister($event->model);
     }
 
-    private function addToMoneyTransactionRegister(Expense $expense)
+    private function createMoneyTransaction(Expense $expense)
     {
-        RegMoneyTransaction::create([
+        $expense->transactionReg()->create([
             'user_id' => $expense->user_id,
             'date' => $expense->date,
             'wallet_id' => $expense->wallet_id,
-            'expend_id' => $expense->id,
-            'income_id' => null,
-            'transfer_id' => null,
-            'cb_id' => null,
-            'lend_id' => null,
-            'sum' => $expense->sum * -1
+            'document_id' => $expense->id,
+            'document_type' => DocumentType::Expense,
+            'type' => TransactionType::Expense,
+            'sum' => floatval($expense->sum * -1)
+        ]);
+    }
+
+    private function updateMoneyTransaction(Expense $expense)
+    {
+        $expense->transactionReg()->update([
+            'date' => $expense->date,
+            'wallet_id' => $expense->wallet_id,
+            'sum' => floatval($expense->sum * -1)
         ]);
     }
 

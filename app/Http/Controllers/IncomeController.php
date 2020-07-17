@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\IncomeCreate;
 use App\Events\IncomeUpdate;
 use App\Http\Resources\IncomeResource;
 use App\Income;
 use App\IncomeRow;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class IncomeController extends Controller
 {
@@ -38,15 +38,10 @@ class IncomeController extends Controller
             abort(403, "Rows limit exceeded for user!");
         }
 
-        DB::beginTransaction();
-
-        $income = Income::create($request->only(['id', 'date', 'wallet_id', 'sum', 'comment']));
-
-        $income->rows()->createMany($request->input('rows'));
-
-        event(new IncomeCreate($income));
-
-        DB::commit();
+        $income = $this->dispatch(new \App\Jobs\Documents\Income\CreateIncome(
+            Auth::user(),
+            $request->only(['id', 'date', 'wallet_id', 'sum', 'comment'])
+        ));
 
         return response()->json([
             'id' => $income->id
@@ -76,21 +71,13 @@ class IncomeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        DB::beginTransaction();
 
         $income = Income::findOrFail($id);
 
-        $rows = IncomeRow::where('doc_id', $id);
-
-        $rows->delete();
-
-        $income->update($request->only(['date', 'wallet_id', 'sum', 'comment']));
-
-        $income->rows()->createMany($request->input('rows'));
-
-        event(new IncomeUpdate($income));
-
-        DB::commit();
+        $this->dispatch(new \App\Jobs\Documents\Income\UpdateIncome(
+            $income,
+            $request->only(['date', 'wallet_id', 'sum', 'comment'])
+        ));
 
         return response("OK", 200);
     }

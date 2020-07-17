@@ -12,6 +12,7 @@ use App\Facades\UUID;
 use App\Scopes\ByUserScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class ModelByUser extends Model
 {
@@ -48,5 +49,10 @@ class ModelByUser extends Model
 
         });
 
+    }
+
+    function setUser(Authenticatable $user)
+    {
+        $this->attributes['user_id'] = $user->getUserId();
     }
 }

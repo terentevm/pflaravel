@@ -18,7 +18,8 @@ class Settings extends ModelByUser
         'user_id',
         'currency_id',
         'wallet_id',
-        'report_currency'
+        'report_currency',
+        'periodicity'
     ];
 
 

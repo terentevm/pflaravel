@@ -7,7 +7,10 @@ use App\Events\ExpenseUpdate;
 use App\Expense;
 use App\ExpenseRow;
 use App\Http\Resources\ExpenseResource;
+use App\Jobs\Documents\Expense\CreateExpense;
+use App\Jobs\Documents\Expense\UpdateExpense;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ExpensesController extends Controller
@@ -37,22 +40,17 @@ class ExpensesController extends Controller
             abort(403, "Rows limit exceeded for user!");
         }
 
-        DB::beginTransaction();
-
-        $expense = Expense::create($request->only([
-            'id',
-            'user_id',
-            'date',
-            'wallet_id',
-            'sum',
-            'comment'
-        ]));
-
-        $expense->rows()->createMany($request->input('rows'));
-
-        event(new ExpenseCreate($expense));
-
-        DB::commit();
+        $expense = $this->dispatch(new CreateExpense(
+            Auth::user(),
+            $request->only([
+                'id',
+                'user_id',
+                'date',
+                'wallet_id',
+                'sum',
+                'comment'
+            ]
+        )));
 
         return response()->json([
             'id' => $expense->id
@@ -83,21 +81,11 @@ class ExpensesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        DB::beginTransaction();
-
         $expense = Expense::findOrFail($id);
 
-        $rows = ExpenseRow::where('doc_id', $id);
-
-        $rows->delete();
-
-        $expense->update($request->only(['date', 'wallet_id', 'sum', 'comment']));
-
-        $expense->rows()->createMany($request->input('rows'));
-
-        event(new ExpenseUpdate($expense));
-
-        DB::commit();
+        $this->dispatch(
+            new UpdateExpense($expense, $request->only(['date', 'wallet_id', 'sum', 'comment']))
+        );
 
         return response("OK", 200);
     }

@@ -33,7 +33,7 @@ class SettingsController extends Controller
     {
         $settings = Settings::findOrFail(Auth::user()->id);
 
-        $settings->update($request->only(['wallet_id', 'report_currency']));
+        $settings->update($request->only(['wallet_id', 'report_currency', 'periodicity']));
 
         return response('',200);
 

@@ -21,7 +21,8 @@ class SettingsResource extends JsonResource
             'report_currency' => $this->report_currency,
             'currency' => $this->currency,
             'wallet' => is_null($this->wallet_id) ? null : new WalletResource($this->wallet),
-            'reportcurrency' => $this->reportcurrency
+            'reportcurrency' => $this->reportcurrency,
+            'periodicity' => $this->periodicity
         ];
     }
 }

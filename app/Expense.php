@@ -46,4 +46,9 @@ class Expense extends ModelByUser
     {
         return floatval($value);
     }
+
+    public function transactionReg()
+    {
+        return $this->hasOne('App\RegMoneyTransaction', 'document_id', 'id');
+    }
 }

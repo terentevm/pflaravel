@@ -37,4 +37,10 @@ class Debt extends ModelByUser
     {
         return $this->belongsTo('App\Contact', 'wallet_id', 'id');
     }
+
+    public function transactionReg()
+    {
+        return $this->hasOne('App\RegMoneyTransaction', 'document_id', 'id');
+    }
+
 }

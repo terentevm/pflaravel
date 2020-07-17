@@ -5,7 +5,8 @@ namespace App\Listeners;
 use App\Events\TransferCreate;
 use App\Events\TransferUpdate;
 use App\Transfer;
-use App\RegMoneyTransaction;
+use App\Enums\DocumentType;
+use App\Enums\TransactionType;
 
 class TransferEventSubscriber
 {
@@ -40,41 +41,43 @@ class TransferEventSubscriber
 
     public function handleTransferCreate(TransferCreate $event)
     {
-        $this->addToMoneyTransactionRegister($event->model);
+        $this->createMoneyTransaction($event->model);
     }
 
     public function handleTransferUpdate(TransferUpdate $event)
     {
-        $records = RegMoneyTransaction::where('transfer_id', $event->model->id);
-        $records->delete();
-
-        $this->addToMoneyTransactionRegister($event->model);
+        $this->updateMoneyTransaction($event->model);
     }
 
-    private function addToMoneyTransactionRegister(Transfer $transfer)
+    private function createMoneyTransaction(Transfer $transfer)
     {
-        RegMoneyTransaction::create([
-            'user_id' => $transfer->user_id,
-            'date' => $transfer->date,
-            'wallet_id' => $transfer->wallet_id_from,
-            'expend_id' => null,
-            'income_id' => null,
-            'transfer_id' => $transfer->id,
-            'cb_id' => null,
-            'lend_id' => null,
-            'sum' => $transfer->sum_from * -1
+        $transfer->transactionReg()->createMany([
+            [
+                'user_id' => $transfer->user_id,
+                'date' => $transfer->date,
+                'wallet_id' => $transfer->wallet_id_from,
+                'document_id' => $transfer->id,
+                'document_type' => DocumentType::Transfer,
+                'type' => TransactionType::Expense,
+                'sum' => floatval($transfer->sum_from * -1)
+            ],
+            [
+                'user_id' => $transfer->user_id,
+                'date' => $transfer->date,
+                'wallet_id' => $transfer->wallet_id_to,
+                'document_id' => $transfer->id,
+                'document_type' => DocumentType::Transfer,
+                'type' => TransactionType::Income,
+                'sum' => floatval($transfer->sum_to)
+            ]
         ]);
+    }
 
-        RegMoneyTransaction::create([
-            'user_id' => $transfer->user_id,
-            'date' => $transfer->date,
-            'wallet_id' => $transfer->wallet_id_to,
-            'expend_id' => null,
-            'income_id' => null,
-            'transfer_id' => $transfer->id,
-            'cb_id' => null,
-            'lend_id' => null,
-            'sum' => $transfer->sum_to
-        ]);
+    private function updateMoneyTransaction(Transfer $transfer)
+    {
+        $transfer->transactionReg()->delete();
+
+        $this->createMoneyTransaction($transfer);
+
     }
 }

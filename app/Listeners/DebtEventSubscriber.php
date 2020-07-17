@@ -5,8 +5,9 @@ namespace App\Listeners;
 use App\Debt;
 use App\Events\DebtCreate;
 use App\Events\DebtUpdate;
-use App\RegMoneyTransaction;
 
+use App\Enums\DocumentType;
+use App\Enums\TransactionType;
 class DebtEventSubscriber
 {
     /**
@@ -40,35 +41,54 @@ class DebtEventSubscriber
 
     public function handleDebtCreate(DebtCreate $event)
     {
-        $this->addToMoneyTransactionRegister($event->model);
+        $this->createMoneyTransaction($event->model);
     }
 
     public function handleDebtUpdate(DebtUpdate $event)
     {
 
-        $records = RegMoneyTransaction::where('lend_id', $event->model->id);
-        $records->delete();
-
-        $this->addToMoneyTransactionRegister($event->model);
+        $this->updateMoneyTransaction($event->model);
 
     }
 
-    private function addToMoneyTransactionRegister(Debt $debt)
+    private function createMoneyTransaction(Debt $debt)
     {
+
         $sum = $debt->type === 'borrow_money' || $debt->type === 'repay_money'
             ? $debt->debit
             : $debt->credit * -1;
 
-        RegMoneyTransaction::create([
+        $t_type = $debt->type === 'borrow_money' || $debt->type === 'repay_money'
+            ? TransactionType::Income
+            : TransactionType::Expense;
+
+        $debt->transactionReg()->create([
             'user_id' => $debt->user_id,
             'date' => $debt->date,
             'wallet_id' => $debt->wallet_id,
-            'expend_id' => null,
-            'income_id' => null,
-            'transfer_id' => null,
-            'cb_id' => null,
-            'lend_id' => $debt->id,
+            'document_id' => $debt->id,
+            'document_type' => DocumentType::Debt,
+            'type' => $t_type,
             'sum' => $sum
+        ]);
+    }
+
+    private function updateMoneyTransaction(Debt $debt)
+    {
+
+        $sum = $debt->type === 'borrow_money' || $debt->type === 'repay_money'
+            ? $debt->debit
+            : $debt->credit * -1;
+
+        $t_type = $debt->type === 'borrow_money' || $debt->type === 'repay_money'
+            ? TransactionType::Income
+            : TransactionType::Expense;
+
+        $debt->transactionReg()->update([
+            'date' => $debt->date,
+            'wallet_id' => $debt->wallet_id,
+            'type' => $t_type,
+            'sum' => floatval($sum)
         ]);
     }
 }

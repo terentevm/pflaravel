@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Debt;
 use App\Events\DebtCreate;
 use App\Events\DebtUpdate;
-use App\Events\MoneyTransactionEvent;
+use App\Jobs\Documents\Debt\CreateDebt;
+use App\Jobs\Documents\Debt\UpdateDebt;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DebtController extends Controller
@@ -33,22 +35,21 @@ class DebtController extends Controller
             abort(403, "Rows limit exceeded for user!");
         }
 
-        DB::beginTransaction();
-
-        $debt = Debt::create($request->only([
-            'id',
-            'date',
-            'wallet_id',
-            'debt_forgiveness',
-            'type',
-            'contact_id',
-            'debit',
-            'credit',
-        ]));
-
-        event(new DebtCreate($debt));
-
-        DB::commit();
+        $debt = $this->dispatch(
+            new CreateDebt(
+                Auth::user(),
+                $request->only([
+                    'id',
+                    'date',
+                    'wallet_id',
+                    'debt_forgiveness',
+                    'type',
+                    'contact_id',
+                    'debit',
+                    'credit',
+                ])
+            )
+        );
 
         return response()->json([
             'id' => $debt->id
@@ -76,22 +77,21 @@ class DebtController extends Controller
      */
     public function update(Request $request, Debt $debt)
     {
-        DB::beginTransaction();
-
-        $debt->update($request->only([
-            'id',
-            'date',
-            'wallet_id',
-            'debt_forgiveness',
-            'type',
-            'contact_id',
-            'debit',
-            'credit',
-        ]));
-
-        event(new DebtUpdate($debt));
-
-        DB::commit();
+        $this->dispatch(
+            new UpdateDebt(
+                $debt,
+                $request->only([
+                    'id',
+                    'date',
+                    'wallet_id',
+                    'debt_forgiveness',
+                    'type',
+                    'contact_id',
+                    'debit',
+                    'credit',
+                ])
+            )
+        );
 
         return response("OK", 200);
     }

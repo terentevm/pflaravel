@@ -30,4 +30,9 @@ class ChangeBalance extends ModelByUser
     {
         return $this->belongsTo('App\Wallet', 'wallet_id', 'id');
     }
+
+    public function transactionReg()
+    {
+        return $this->hasOne('App\RegMoneyTransaction', 'document_id', 'id');
+    }
 }
