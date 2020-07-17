@@ -26,4 +26,15 @@ class RegMoneyTransaction extends Model
     {
         return $this->belongsTo('App\Wallet', 'wallet_id', 'id');
     }
+
+    public function currency()
+    {
+        return $this->hasOneThrough('App\Currency', 'App\Wallet', 'currency_id','id' );
+    }
+
+    public function scopeStart($query, $date)
+    {
+        return $query->where('date', '>=', $date);
+    }
+
 }
