@@ -13,8 +13,8 @@ class AddDescriptionToExpenses extends Migration
      */
     public function up()
     {
-        Schema::table('expenses', function (Blueprint $table) {
-            //
+        Schema::table('doc_expenses_header', function (Blueprint $table) {
+            $table->string('description', 250)->default('-');
         });
     }
 
@@ -25,8 +25,8 @@ class AddDescriptionToExpenses extends Migration
      */
     public function down()
     {
-        Schema::table('expenses', function (Blueprint $table) {
-            //
+        Schema::table('doc_expenses_header', function (Blueprint $table) {
+            $table->dropColumn('description');
         });
     }
 }

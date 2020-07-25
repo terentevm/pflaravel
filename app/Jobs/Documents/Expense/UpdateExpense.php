@@ -25,7 +25,9 @@ class UpdateExpense implements IJob
 
         $this->expense->rows()->delete();
 
-        $this->expense->update($this->data);
+        $this->expense->fill($this->data);
+        $this->expense->buildDescription($this->data['rows']);
+        $this->expense->save();
 
         $this->expense->rows()->createMany($this->data['rows']);
 

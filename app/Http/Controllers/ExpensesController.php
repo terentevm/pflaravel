@@ -12,6 +12,7 @@ use App\Jobs\Documents\Expense\UpdateExpense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\ExpensesListRequest;
 
 class ExpensesController extends Controller
 {
@@ -20,10 +21,12 @@ class ExpensesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(ExpensesListRequest $request)
     {
-        return Expense::with('wallet')->filter($request)->orderBy('date',
+        $result = Expense::with('wallet')->filter($request)->orderBy('date',
             'desc')->paginate($this->paginationCount);
+        $items = $result->items();
+        return $result;
 
     }
 

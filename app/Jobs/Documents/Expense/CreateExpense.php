@@ -25,6 +25,7 @@ class CreateExpense implements IJob
 
         $expense = new Expense($this->data);
         $expense->setUser($this->user);
+        $expense->buildDescription($this->data['rows']);
         $expense->save();
 
         $expense->rows()->createMany($this->data['rows']);

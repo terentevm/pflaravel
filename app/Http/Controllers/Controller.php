@@ -16,5 +16,5 @@ class Controller extends BaseController
      * Define how many records will be fetched for pagination step
      * @var int
      */
-    protected $paginationCount = 50;
+    protected $paginationCount = 20;
 }
