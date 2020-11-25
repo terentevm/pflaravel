@@ -39,7 +39,7 @@ class WalletsController extends Controller
             abort(403, "Rows limit exceeded for user!");
         }
 
-        $wallet = Wallet::create($request->all());
+        $wallet = Wallet::create($request->except('balance'));
 
         return response()->json([
             'id' => $wallet->id
@@ -57,6 +57,10 @@ class WalletsController extends Controller
     {
 
         $wallet = Wallet::with('currency')->findOrFail($id);
+
+        $transactions = \App\RegMoneyTransaction::where('wallet_id', $wallet->id)->limit(1)->get();
+
+        $wallet->block_currency = $transactions->count() > 0;
 
         if ($request->input('withbalance') === 'true') {
 
@@ -78,7 +82,7 @@ class WalletsController extends Controller
     {
         $wallet = Wallet::findOrFail($id);
 
-        $wallet->update($request->all());
+        $wallet->update($request->except('balance'));
     }
 
     /**

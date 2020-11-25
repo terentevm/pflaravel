@@ -59,10 +59,10 @@ class ItemsExpenditureController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param  string $id
      * @return \App\Http\Resources\ItemExpenditureResource
      */
-    public function show($id)
+    public function show(string $id)
     {
         $item = ItemExpenditure::with('parent')->findOrFail($id);
 
@@ -78,7 +78,7 @@ class ItemsExpenditureController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ItemsExpenditureRequest $request, $id)
+    public function update(ItemsExpenditureRequest $request, string $id)
     {
         $item = ItemExpenditure::findOrFail($id);
 
@@ -99,8 +99,8 @@ class ItemsExpenditureController extends Controller
      * @param  string $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(string $id)
     {
-        ItemExpenditure::destroy($id);
+        return ItemExpenditure::destroy($id) > 0 ? response('DELETED', 200) : response('NOT DELETED', 500);
     }
 }

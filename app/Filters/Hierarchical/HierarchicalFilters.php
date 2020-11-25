@@ -10,6 +10,7 @@ namespace App\Filters\Hierarchical;
 
 
 use App\Filters\FiltersAbstract;
+use App\Filters\NameFilter;
 
 class HierarchicalFilters extends FiltersAbstract
 {
@@ -20,6 +21,6 @@ class HierarchicalFilters extends FiltersAbstract
      */
     protected $filters = [
         'parent' => ParentFilter::class,
-
+        'name' => NameFilter::class
     ];
 }

@@ -20,7 +20,8 @@ class Wallet extends ModelByUser
         'is_creditcard',
         'grace_period',
         'credit_limit',
-        'balance'
+        'balance',
+        'block_currency'
     ];
 
     /**

@@ -20,7 +20,8 @@ class WalletResource extends JsonResource
             'currency' => $this->currency,
             'is_creditcard' => $this->is_creditcard,
             'grace_period' => $this->grace_period,
-            'credit_limit' => $this->credit_limit
+            'credit_limit' => $this->credit_limit,
+            'block_currency' => $this->block_currency
         ];
 
         if ($request->input('withbalance') === 'true') {
